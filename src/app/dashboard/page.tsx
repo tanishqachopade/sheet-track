@@ -7,6 +7,7 @@ from "@/services/user.service";
 
 import { getTrackedSheets }
 from "@/services/sheet.service";
+import SheetList from "@/components/dashboard/SheetList";
 
 
 export default async function Dashboard(){
@@ -41,7 +42,7 @@ sheets.length===0
 ?
 <EmptyState/>
 :
-null
+<SheetList sheets={sheets}/>
 }
 
 

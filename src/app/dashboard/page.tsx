@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import LogoutButton from "@/components/auth/logout-button";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -28,15 +29,22 @@ export default async function Dashboard() {
       {/* Main */}
       <main className="flex-1 p-8">
 
-        <div>
-          <h2 className="font-semibold">
-            {session.user?.name}
-          </h2>
+       <div className="flex items-center justify-between">
 
-          <p className="text-gray-500">
-            {session.user?.email}
-          </p>
-        </div>
+  <div>
+    <h2 className="font-semibold">
+      {session.user?.name}
+    </h2>
+
+    <p className="text-gray-500">
+      {session.user?.email}
+    </p>
+  </div>
+
+
+  <LogoutButton />
+
+</div>
 
 
         <section className="
@@ -68,6 +76,8 @@ export default async function Dashboard() {
             ">
               Connect Sheet
             </button>
+
+           
 
           </div>
         </section>

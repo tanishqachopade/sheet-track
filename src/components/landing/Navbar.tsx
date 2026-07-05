@@ -1,4 +1,5 @@
 import { landingContent } from "@/constants/landing";
+import LoginButton from "@/components/auth/login-button";
 
 export default function Navbar() {
   return (
@@ -8,15 +9,7 @@ export default function Navbar() {
         {landingContent.navbar.logo}
       </h1>
 
-      <button className="
-        rounded-lg
-        border
-        px-4
-        py-2
-        hover:bg-gray-100
-      ">
-        {landingContent.navbar.loginText}
-      </button>
+      <LoginButton />
 
     </nav>
   );

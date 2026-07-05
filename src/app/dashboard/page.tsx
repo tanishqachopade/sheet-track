@@ -1,60 +1,79 @@
-import Sidebar from "@/components/dashboard/Sidebar";
-import UserProfile from "@/components/dashboard/UserProfile";
-import EmptyState from "@/components/dashboard/EmptyState";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-import { getCurrentUser }
-from "@/services/user.service";
+export default async function Dashboard() {
+  const session = await auth();
 
-import { getTrackedSheets }
-from "@/services/sheet.service";
-import SheetList from "@/components/dashboard/SheetList";
+  if (!session) {
+    redirect("/");
+  }
 
+  return (
+    <div className="flex min-h-screen">
 
-export default async function Dashboard(){
+      {/* Sidebar */}
+      <aside className="w-64 border-r p-6">
+        <h1 className="font-bold text-xl">
+          SheetTrack
+        </h1>
 
-
-const user =
-await getCurrentUser();
-
-
-const sheets =
-await getTrackedSheets();
-
-
-return (
-
-<div className="flex">
-
-
-<Sidebar/>
+        <nav className="mt-10 space-y-4">
+          <p>Sheets</p>
+          <p>Versions</p>
+          <p>Settings</p>
+        </nav>
+      </aside>
 
 
-<main className="flex-1 p-8">
+      {/* Main */}
+      <main className="flex-1 p-8">
+
+        <div>
+          <h2 className="font-semibold">
+            {session.user?.name}
+          </h2>
+
+          <p className="text-gray-500">
+            {session.user?.email}
+          </p>
+        </div>
 
 
-<UserProfile user={user}/>
+        <section className="
+          mt-10
+          flex
+          h-52
+          items-center
+          justify-center
+          rounded-xl
+          border
+        ">
+          <div className="text-center">
 
+            <h3 className="font-semibold">
+              No spreadsheets tracked yet
+            </h3>
 
-<section className="mt-10">
+            <p className="mt-4 text-gray-500">
+              Connect your first Google Sheet to start version tracking.
+            </p>
 
-{
-sheets.length===0
-?
-<EmptyState/>
-:
-<SheetList sheets={sheets}/>
-}
+            <button className="
+              mt-6
+              rounded-lg
+              bg-black
+              px-5
+              py-3
+              text-white
+            ">
+              Connect Sheet
+            </button>
 
+          </div>
+        </section>
 
-</section>
+      </main>
 
-
-</main>
-
-
-</div>
-
-
-)
-
+    </div>
+  );
 }

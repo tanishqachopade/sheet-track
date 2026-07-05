@@ -7,31 +7,42 @@ import {
 
 
 import {
-
-fetchMetadata,
-fetchSheetSnapshot
-
+  fetchMetadata,
+  fetchSheetSnapshot
 } from "@/services/googleSheets";
 
 
+import {
+  connectSheetSchema
+} from "@/schemas/sheets";
 
 
-export async function POST(req: Request) {
+
+export async function POST(
+  req: Request
+) {
 
 
-const session = await auth();
+try {
+
+
+const session =
+await auth();
 
 
 
 if(!session){
 
 return NextResponse.json(
+
 {
 error:"Unauthorized"
 },
+
 {
 status:401
 }
+
 );
 
 }
@@ -39,20 +50,15 @@ status:401
 
 
 const body =
-await req.json();
+connectSheetSchema.parse(
+  await req.json()
+);
 
 
 
 const spreadsheetId =
 extractSpreadsheetId(
 body.url
-);
-
-
-
-console.log(
-"SHEET ID:",
-spreadsheetId
 );
 
 
@@ -73,23 +79,43 @@ session.accessToken!
 
 
 
-console.log(
-"SNAPSHOT:",
+return NextResponse.json({
+
+spreadsheetId,
+metadata,
 snapshot
+
+});
+
+
+
+}
+
+
+catch(error){
+
+
+console.error(
+"Sheet connection failed"
 );
 
 
 
+return NextResponse.json(
 
-return NextResponse.json({
+{
+error:
+"Unable to connect sheet"
+},
 
-spreadsheetId,
+{
+status:400
+}
 
-metadata,
+);
 
-snapshot
 
-});
+}
 
 
 }

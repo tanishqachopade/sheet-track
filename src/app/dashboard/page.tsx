@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import LogoutButton from "@/components/auth/logout-button";
+import Link from "next/link";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -66,17 +67,22 @@ export default async function Dashboard() {
               Connect your first Google Sheet to start version tracking.
             </p>
 
-            <button className="
-              mt-6
-              rounded-lg
-              bg-black
-              px-5
-              py-3
-              text-white
-            ">
-              Connect Sheet
-            </button>
+            <Link
+href="/dashboard/connect"
+className="
+mt-6
+inline-block
+rounded-lg
+bg-black
+px-5
+py-3
+text-white
+"
+>
 
+Connect Sheet
+
+</Link>
            
 
           </div>

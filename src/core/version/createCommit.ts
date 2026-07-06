@@ -6,6 +6,11 @@ import { generateSnapshotHash } from "../snapshot/hash";
 
 import { CreateCommitSchema } from "./schema";
 
+import {
+    acquireCommitLock,
+    releaseCommitLock
+} from "./commitLock";
+
 
 interface Props {
 
@@ -44,6 +49,26 @@ CreateCommitSchema.parse({
 
 });
 
+const lockId =
+    await acquireCommitLock(
+        userId,
+        spreadsheetId
+    );
+
+
+if(!lockId){
+
+    return {
+
+        success:false,
+
+        message:"Commit already in progress"
+
+    };
+
+}
+
+try {
 
 
 // verify spreadsheet ownership
@@ -270,13 +295,27 @@ return await tx.commit.create({
 
 
 
-    return {
+        return {
 
         success:true,
 
         commit
 
     };
+
+
+} 
+finally {
+
+
+    await releaseCommitLock(
+        userId,
+        spreadsheetId,
+        lockId
+    );
+
+
+}
 
 
 }

@@ -4,61 +4,69 @@ import GoogleProvider from "next-auth/providers/google";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 
-  providers: [
+providers:[
 
-    GoogleProvider({
+GoogleProvider({
 
-      clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+clientId:
+process.env.AUTH_GOOGLE_ID!,
 
-      authorization: {
-        params: {
-          scope:
-            "openid email profile https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.metadata.readonly",
+clientSecret:
+process.env.AUTH_GOOGLE_SECRET!,
 
-          access_type: "offline",
-          prompt: "consent",
-        },
-      },
+authorization:{
+params:{
 
-    }),
+scope:
+"openid email profile https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.metadata.readonly",
 
-  ],
+access_type:"offline",
 
+prompt:"consent",
 
-  callbacks: {
+},
 
+},
 
-    async jwt({ token, account }) {
+}),
 
-
-      if (account) {
-
-        token.accessToken =
-          account.access_token;
-
-      }
+],
 
 
-      return token;
-
-    },
+callbacks:{
 
 
-
-    async session({ session, token }) {
-
-
-      session.accessToken =
-        token.accessToken as string;
+async jwt({token,account}){
 
 
-      return session;
+if(account){
 
-    },
+token.accessToken =
+account.access_token;
+
+}
 
 
-  },
+return token;
+
+},
+
+
+
+async session({session,token}){
+
+
+session.accessToken =
+token.accessToken as string;
+
+
+return session;
+
+
+},
+
+
+},
 
 
 });

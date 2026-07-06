@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 import {
   rateLimit
@@ -35,7 +36,7 @@ await auth();
 
 
 
-if(!session){
+if(!session?.user?.email){
 
 return NextResponse.json(
 
@@ -51,9 +52,39 @@ status:401
 
 }
 
+const user =
+await prisma.user.upsert({
+
+  where:{
+    email:
+    session.user.email,
+  },
+
+
+  update:{},
+
+
+  create:{
+
+    email:
+    session.user.email,
+
+    name:
+    session.user.name,
+
+    image:
+    session.user.image,
+
+  },
+
+
+});
+
+
+
 const limit =
 await rateLimit.limit(
-  session.user?.email!
+  session.user.email!
 );
 
 
@@ -109,9 +140,35 @@ session.accessToken!
 
 
 
+const spreadsheet =
+await prisma.spreadsheet.upsert({
+
+  where:{
+    googleSheetId: spreadsheetId,
+  },
+
+  update:{},
+
+  create:{
+
+    googleSheetId:
+    spreadsheetId,
+
+    title:
+    metadata.title ?? "Untitled Sheet",
+
+    ownerId:
+user.id,
+
+  },
+
+});
+
+
+
 return NextResponse.json({
 
-spreadsheetId,
+spreadsheet,
 metadata,
 snapshot
 
@@ -126,7 +183,8 @@ catch(error){
 
 
 console.error(
-"Sheet connection failed"
+"Sheet connection failed:",
+error
 );
 
 

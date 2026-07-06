@@ -3,8 +3,14 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 import {
+  verifyOrigin
+} from "@/lib/security";
+
+
+import {
   rateLimit
 } from "@/lib/rateLimit";
+
 
 import {
   extractSpreadsheetId
@@ -31,6 +37,37 @@ export async function POST(
 try {
 
 
+/*
+|--------------------------------------------------------------------------
+| CSRF / Origin protection
+|--------------------------------------------------------------------------
+*/
+
+if(!verifyOrigin(req)){
+
+return NextResponse.json(
+
+{
+error:"Invalid origin"
+},
+
+{
+status:403
+}
+
+);
+
+}
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Authentication
+|--------------------------------------------------------------------------
+*/
+
+
 const session =
 await auth();
 
@@ -52,39 +89,18 @@ status:401
 
 }
 
-const user =
-await prisma.user.upsert({
-
-  where:{
-    email:
-    session.user.email,
-  },
 
 
-  update:{},
-
-
-  create:{
-
-    email:
-    session.user.email,
-
-    name:
-    session.user.name,
-
-    image:
-    session.user.image,
-
-  },
-
-
-});
-
+/*
+|--------------------------------------------------------------------------
+| Rate limit BEFORE database work
+|--------------------------------------------------------------------------
+*/
 
 
 const limit =
 await rateLimit.limit(
-  session.user.email!
+  session.user.email
 );
 
 
@@ -110,6 +126,53 @@ status:429
 
 
 
+/*
+|--------------------------------------------------------------------------
+| Ensure user exists
+|--------------------------------------------------------------------------
+*/
+
+
+const user =
+await prisma.user.upsert({
+
+where:{
+
+email:
+session.user.email,
+
+},
+
+
+update:{},
+
+
+create:{
+
+email:
+session.user.email,
+
+name:
+session.user.name,
+
+image:
+session.user.image,
+
+},
+
+
+});
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Validate input
+|--------------------------------------------------------------------------
+*/
+
+
 const body =
 connectSheetSchema.parse(
   await req.json()
@@ -124,55 +187,134 @@ body.url
 
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Verify Google access
+|--------------------------------------------------------------------------
+*/
+
+
 const metadata =
 await fetchMetadata(
+
 spreadsheetId,
+
 session.accessToken!
+
 );
 
 
 
-const snapshot =
 await fetchSheetSnapshot(
+
 spreadsheetId,
+
 session.accessToken!
+
 );
 
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Save spreadsheet
+|--------------------------------------------------------------------------
+*/
 
 
 const spreadsheet =
 await prisma.spreadsheet.upsert({
 
-  where:{
-    googleSheetId: spreadsheetId,
-  },
+where:{
 
-  update:{},
+googleSheetId:
+spreadsheetId,
 
-  create:{
+},
 
-    googleSheetId:
-    spreadsheetId,
 
-    title:
-    metadata.title ?? "Untitled Sheet",
+update:{},
 
-    ownerId:
+
+create:{
+
+googleSheetId:
+spreadsheetId,
+
+
+title:
+metadata.title ?? "Untitled Sheet",
+
+
+ownerId:
 user.id,
 
-  },
+},
+
 
 });
 
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Ownership protection
+|--------------------------------------------------------------------------
+*/
+
+
+if(
+spreadsheet.ownerId !== user.id
+){
+
+
+return NextResponse.json(
+
+{
+error:"Forbidden"
+},
+
+{
+status:403
+}
+
+);
+
+
+}
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Safe response
+|--------------------------------------------------------------------------
+*/
 
 
 return NextResponse.json({
 
-spreadsheet,
-metadata,
-snapshot
+spreadsheet:{
+
+id:
+spreadsheet.id,
+
+
+title:
+spreadsheet.title,
+
+},
+
+
+message:
+"Sheet connected"
 
 });
+
 
 
 

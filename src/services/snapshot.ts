@@ -8,6 +8,10 @@ import {
   generateSnapshotHash
 } from "@/core/snapshot/hash";
 
+import {
+ SnapshotSchema
+} from "@/core/snapshot/schema";
+
 
 export async function createSnapshot(
   spreadsheetId: string,
@@ -35,6 +39,22 @@ export async function createSnapshot(
       values,
       formulas
     );
+
+SnapshotSchema.parse(
+ snapshot
+);
+
+    const cellCount =
+ Object.keys(snapshot.cells).length;
+
+
+if (cellCount > 100000) {
+
+ throw new Error(
+  "Snapshot exceeds maximum size"
+ );
+
+}
 
 
   const hash =

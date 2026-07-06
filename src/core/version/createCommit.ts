@@ -4,8 +4,12 @@ import { buildSnapshot } from "../snapshot/builder";
 import { generateDiff } from "../diff";
 import { generateSnapshotHash } from "../snapshot/hash";
 
+import { CreateCommitSchema } from "./schema";
+
 
 interface Props {
+
+    userId:string;
 
     spreadsheetId:string;
 
@@ -17,12 +21,57 @@ interface Props {
 }
 
 export async function createCommit({
+    userId,
     spreadsheetId,
     values,
     formulas,
     message
 }:Props){
 
+    // validate input
+
+CreateCommitSchema.parse({
+
+    userId,
+
+    spreadsheetId,
+
+    values,
+
+    formulas,
+
+    message
+
+});
+
+
+
+// verify spreadsheet ownership
+
+const spreadsheet =
+    await prisma.spreadsheet.findFirst({
+
+        where:{
+
+            id:spreadsheetId,
+
+            ownerId:userId
+
+        }
+
+    });
+
+
+
+if(!spreadsheet){
+
+
+    throw new Error(
+        "Unauthorized spreadsheet access"
+    );
+
+
+}
 
     // generate current snapshot
 
@@ -114,7 +163,10 @@ export async function createCommit({
 
 
     const commit =
-        await prisma.commit.create({
+await prisma.$transaction(async(tx)=>{
+
+
+return await tx.commit.create({
 
 
             data:{
@@ -214,6 +266,7 @@ export async function createCommit({
 
 
         });
+    });
 
 
 

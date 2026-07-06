@@ -29,7 +29,6 @@ export const SnapshotSchema =
       ]),
 
 
-
      formula:
 
       z.union([
@@ -43,7 +42,33 @@ export const SnapshotSchema =
 
     })
 
+   ),
+
+
+
+  rows:
+
+   z.array(
+
+    z.array(
+
+     z.union([
+
+      z.string(),
+
+      z.number(),
+
+      z.boolean(),
+
+      z.null()
+
+     ])
+
+    )
+
    )
+
+   .optional()
 
 
  });

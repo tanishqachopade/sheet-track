@@ -1,6 +1,7 @@
 import { diffCells } from "./cellDiff";
 import { diffFormulas } from "./formulaDiff";
 import { detectRowMoves } from "./rowMovement";
+import { SnapshotSchema } from "../snapshot/schema";
 
 
 export function generateDiff(
@@ -9,23 +10,32 @@ export function generateDiff(
 ){
 
 
+ const safeOldSnapshot =
+    SnapshotSchema.parse(oldSnapshot);
+
+
+ const safeNewSnapshot =
+    SnapshotSchema.parse(newSnapshot);
+
+
+
  return {
 
     cells: diffCells(
-        oldSnapshot.cells,
-        newSnapshot.cells
+        safeOldSnapshot.cells,
+        safeNewSnapshot.cells
     ),
 
 
     formulas: diffFormulas(
-        oldSnapshot.cells,
-        newSnapshot.cells
+        safeOldSnapshot.cells,
+        safeNewSnapshot.cells
     ),
 
 
     rows: detectRowMoves(
-        oldSnapshot.rows ?? [],
-        newSnapshot.rows ?? []
+        safeOldSnapshot.rows ?? [],
+        safeNewSnapshot.rows ?? []
     )
 
  };

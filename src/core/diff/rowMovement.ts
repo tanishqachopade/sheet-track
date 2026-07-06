@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { InternalRowMove } from "./types";
+import { normalizeValue } from "./normalizer";
 
 
 
@@ -7,7 +8,11 @@ function hashRow(row:any[]) {
 
  return crypto
     .createHash("sha256")
-    .update(JSON.stringify(row))
+    .update(
+ JSON.stringify(
+  row.map(normalizeValue)
+ )
+)
     .digest("hex");
 
 }
@@ -20,7 +25,22 @@ export function detectRowMoves(
 ){
 
 
-const moves:InternalRowMove[] = [];
+ const MAX_ROWS = 100000;
+
+
+ if(
+  oldRows.length > MAX_ROWS ||
+  newRows.length > MAX_ROWS
+ ){
+
+  throw new Error(
+   "Sheet too large to diff"
+  );
+
+ }
+
+
+ const moves:InternalRowMove[] = [];
 
 
 

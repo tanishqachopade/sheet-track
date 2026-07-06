@@ -1,13 +1,105 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
+
+// =====================
+// USER
+// =====================
+
+model User {
+  id String @id @default(cuid())
+
+  name  String?
+  email String  @unique
+  image String?
+
+  spreadsheets Spreadsheet[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// =====================
+// SPREADSHEET
+// =====================
+
+model Spreadsheet {
+  id String @id @default(cuid())
+
+  googleSheetId String @unique
+  title         String
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  snapshots Snapshot[]
+  commits   Commit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// =====================
+// SNAPSHOT
+// =====================
+
+model Snapshot {
+  id String @id @default(cuid())
+
+  spreadsheetId String
+  spreadsheet   Spreadsheet @relation(fields: [spreadsheetId], references: [id], onDelete: Cascade)
+
+  commitId String? @unique
+  commit   Commit? @relation(fields: [commitId], references: [id])
+
+  data Json
+
+  hash String
+
+  createdAt DateTime @default(now())
+}
+
+// =====================
+// COMMIT
+// =====================
+
+model Commit {
+  id String @id @default(cuid())
+
+  message String
+
+  hash String
+
+  spreadsheetId String
+  spreadsheet Spreadsheet @relation(fields: [spreadsheetId], references: [id], onDelete: Cascade)
+
+  snapshot Snapshot?
+
+  changes Change[]
+
+  createdAt DateTime @default(now())
+}
+
+// =====================
+// CHANGE
+// =====================
+
+model Change {
+  id String @id @default(cuid())
+
+  commitId String
+  commit   Commit @relation(fields: [commitId], references: [id], onDelete: Cascade)
+
+  cell String
+
+  oldValue String?
+  newValue String?
+
+  createdAt DateTime @default(now())
+}
+

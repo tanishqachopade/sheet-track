@@ -56,6 +56,8 @@ model Snapshot {
 
   data Json
 
+  hash String
+
   createdAt DateTime @default(now())
 }
 
@@ -93,3 +95,4 @@ model Change {
 
   createdAt DateTime @default(now())
 }
+

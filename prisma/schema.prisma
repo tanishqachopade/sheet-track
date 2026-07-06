@@ -54,6 +54,9 @@ model Snapshot {
   spreadsheetId String
   spreadsheet   Spreadsheet @relation(fields: [spreadsheetId], references: [id], onDelete: Cascade)
 
+  commitId String? @unique
+  commit   Commit? @relation(fields: [commitId], references: [id])
+
   data Json
 
   hash String
@@ -70,8 +73,12 @@ model Commit {
 
   message String
 
+  hash String
+
   spreadsheetId String
-  spreadsheet   Spreadsheet @relation(fields: [spreadsheetId], references: [id], onDelete: Cascade)
+  spreadsheet Spreadsheet @relation(fields: [spreadsheetId], references: [id], onDelete: Cascade)
+
+  snapshot Snapshot?
 
   changes Change[]
 

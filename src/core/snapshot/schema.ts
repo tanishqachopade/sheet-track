@@ -4,27 +4,46 @@ import { z } from "zod";
 export const SnapshotSchema =
  z.object({
 
- cells:
-  z.record(
 
-   z.object({
+  cells:
 
-    value:
-     z.union([
-      z.string(),
-      z.number(),
-      z.boolean(),
-      z.null()
-     ]),
+   z.record(
 
-    formula:
-     z.union([
-      z.string(),
-      z.null()
-     ])
+    z.string(),
 
-   })
+    z.object({
 
-  )
 
-});
+     value:
+
+      z.union([
+
+       z.string(),
+
+       z.number(),
+
+       z.boolean(),
+
+       z.null()
+
+      ]),
+
+
+
+     formula:
+
+      z.union([
+
+       z.string(),
+
+       z.null()
+
+      ])
+
+
+    })
+
+   )
+
+
+ });

@@ -6,52 +6,67 @@ import { useState } from "react";
 export default function ConnectPage() {
 
 
-  const [url, setUrl] = useState("");
+  const [url, setUrl] =
+    useState("");
+
 
   const [result, setResult] =
     useState<any>(null);
 
 
+  const [error, setError] =
+    useState("");
+
+
+
   async function connect() {
 
 
-    console.log(
-      "BUTTON CLICKED"
-    );
+    setError("");
+    setResult(null);
+
 
 
     const res =
-      await fetch(
-        "/api/sheets/connect",
-        {
+    await fetch(
+      "/api/sheets/connect",
+      {
 
-          method: "POST",
+        method:"POST",
 
-          headers: {
-            "Content-Type":
-            "application/json",
-          },
+        headers:{
+          "Content-Type":
+          "application/json"
+        },
 
 
-          body:
-          JSON.stringify({
-            url
-          }),
+        body:
+        JSON.stringify({
+          url
+        })
 
-        }
-      );
+      }
+    );
 
 
 
     const data =
-      await res.json();
+    await res.json();
 
 
 
-    console.log(
-      "RESPONSE:",
-      data
-    );
+    if(!res.ok){
+
+
+      setError(
+        data.error ||
+        "Something went wrong"
+      );
+
+
+      return;
+
+    }
 
 
 
@@ -59,6 +74,7 @@ export default function ConnectPage() {
 
 
   }
+
 
 
 
@@ -85,9 +101,7 @@ export default function ConnectPage() {
         p-3
         "
 
-
         value={url}
-
 
         onChange={
           (e)=>
@@ -95,7 +109,6 @@ export default function ConnectPage() {
             e.target.value
           )
         }
-
 
         placeholder=
         "Paste Google Sheet URL"
@@ -126,6 +139,29 @@ export default function ConnectPage() {
 
 
       {
+        error && (
+
+          <div
+            className="
+            mt-5
+            rounded
+            border
+            p-4
+            text-red-600
+            "
+          >
+
+            {error}
+
+          </div>
+
+        )
+      }
+
+
+
+
+      {
         result && (
 
           <div
@@ -139,10 +175,10 @@ export default function ConnectPage() {
 
 
             <h2
-            className="
-            font-bold
-            text-green-600
-            "
+              className="
+              font-bold
+              text-green-600
+              "
             >
 
               Connected Successfully ✓
@@ -153,8 +189,7 @@ export default function ConnectPage() {
 
             <p className="mt-3">
 
-              Sheet:
-              {" "}
+              Sheet:{" "}
               {result.metadata.title}
 
             </p>
@@ -163,8 +198,7 @@ export default function ConnectPage() {
 
             <p>
 
-              Tabs:
-              {" "}
+              Tabs:{" "}
               {result.metadata.sheets.length}
 
             </p>
@@ -173,8 +207,8 @@ export default function ConnectPage() {
 
             <p>
 
-              Cells tracked:
-              {" "}
+              Cells tracked:{" "}
+
               {
               Object.keys(
                 result.snapshot
@@ -184,10 +218,12 @@ export default function ConnectPage() {
             </p>
 
 
+
           </div>
 
         )
       }
+
 
 
     </div>

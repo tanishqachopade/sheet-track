@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
 import {
+  rateLimit
+} from "@/lib/rateLimit";
+
+import {
   extractSpreadsheetId
 } from "@/lib/sheets";
 
@@ -44,6 +48,32 @@ status:401
 }
 
 );
+
+}
+
+const limit =
+await rateLimit.limit(
+  session.user?.email!
+);
+
+
+
+if(!limit.success){
+
+
+return NextResponse.json(
+
+{
+error:
+"Too many requests. Try again later."
+},
+
+{
+status:429
+}
+
+);
+
 
 }
 

@@ -171,21 +171,15 @@ font-mono
 
 
 {
-change.type === "ADDED"
-
+change.type === "ADD"
 &&
-
 (
-
 <p className="text-green-600">
 
 + {change.newValue}
 
 </p>
-
-
 )
-
 }
 
 

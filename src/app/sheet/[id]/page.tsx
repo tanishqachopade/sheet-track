@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import CreateCommitButton from "@/components/CreateCommitButton";
 
 export default async function SheetPage({
   params,
@@ -108,6 +110,14 @@ await prisma.spreadsheet.findFirst({
 
       </p>
 
+      <CreateCommitButton
+
+spreadsheetId={
+spreadsheet.id
+}
+
+/>
+
 
 
       <div className="mt-10 space-y-6">
@@ -158,66 +168,76 @@ await prisma.spreadsheet.findFirst({
 
 
 
+              
+
+
               {/* commit card */}
 
 
-              <div
-                className="
-                border
-                rounded-lg
-                p-5
-                w-full
-                "
-              >
+<Link
+
+href={`/commit/${commit.id}`}
+
+className="
+border
+rounded-lg
+p-5
+w-full
+block
+hover:bg-gray-50
+"
+
+>
 
 
-                <h2 className="font-semibold">
+<h2 className="font-semibold">
 
-                  v{
-                    spreadsheet.commits.length
-                    -
-                    index
-                  }
+v{
+spreadsheet.commits.length
+-
+index
+}
 
-                </h2>
-
-
-                <p className="mt-1">
-
-                  {commit.message}
-
-                </p>
-
-
-
-                <p className="text-sm text-gray-500 mt-3">
-
-                  {
-                    commit.changes.length
-                  }
-
-                  {" "}changes
-
-
-                </p>
+</h2>
 
 
 
-                <p className="text-xs text-gray-400 mt-2">
+<p className="mt-1">
 
-                  {
-                    commit.createdAt
-                    .toLocaleString()
-                  }
+{commit.message}
 
-
-                </p>
+</p>
 
 
-              </div>
+
+<p className="text-sm text-gray-500 mt-3">
+
+{
+commit.changes.length
+}
+
+{" "}changes
 
 
-            </div>
+</p>
+
+
+
+<p className="text-xs text-gray-400 mt-2">
+
+{
+commit.createdAt
+.toLocaleString()
+}
+
+
+</p>
+
+
+</Link>
+
+
+</div>
 
           ))
 

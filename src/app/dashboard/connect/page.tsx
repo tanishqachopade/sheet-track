@@ -162,68 +162,58 @@ export default function ConnectPage() {
 
 
       {
-        result && (
+result && (
 
-          <div
-            className="
-            mt-8
-            rounded-xl
-            border
-            p-5
-            "
-          >
-
-
-            <h2
-              className="
-              font-bold
-              text-green-600
-              "
-            >
-
-              Connected Successfully ✓
-
-            </h2>
+<div
+className="
+mt-8
+rounded-xl
+border
+p-5
+"
+>
 
 
+<h2
+className="
+font-bold
+text-green-600
+"
+>
 
-            <p className="mt-3">
+Connected Successfully ✓
 
-              Sheet:{" "}
-              {result.metadata.title}
-
-            </p>
+</h2>
 
 
+<p className="mt-3">
 
-            <p>
+Sheet:{" "}
 
-              Tabs:{" "}
-              {result.metadata.sheets.length}
+{
+result.spreadsheet.title
+}
 
-            </p>
+</p>
 
 
 
-            <p>
 
-              Cells tracked:{" "}
+<p>
 
-              {
-              Object.keys(
-                result.snapshot
-              ).length
-              }
+{
+result.message
+}
 
-            </p>
+</p>
 
 
 
-          </div>
+</div>
 
-        )
-      }
+)
 
+}
 
 
     </div>

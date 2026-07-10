@@ -246,40 +246,53 @@ return await tx.commit.create({
                         ...changes.cells.map((change:any)=>({
 
 
-                            cell:change.cell,
+    cell:
+    change.cell,
 
 
-                            oldValue:String(
-                                change.oldValue ?? ""
-                            ),
+    type:
+    change.type,
 
 
-                            newValue:String(
-                                change.newValue ?? ""
-                            )
+    oldValue:
+    String(
+        change.oldValue ?? ""
+    ),
 
 
-                        })),
+    newValue:
+    String(
+        change.newValue ?? ""
+    )
+
+
+})),
 
 
                         ...changes.formulas.map((change:any)=>({
 
 
-                            cell:change.cell,
+    cell:
+    change.cell,
 
 
-                            oldValue:String(
-                                change.oldFormula ?? ""
-                            ),
+    type:
+    "FORMULA_CHANGED",
 
 
-                            newValue:String(
-                                change.newFormula ?? ""
-                            )
+    oldValue:
+    String(
+        change.oldFormula ?? ""
+    ),
 
 
-                        }))
+    newValue:
+    String(
+        change.newFormula ?? ""
+    )
 
+
+}))
 
                     ]
 

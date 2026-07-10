@@ -97,6 +97,8 @@ model Change {
 
   cell String
 
+  type String
+
   oldValue String?
   newValue String?
 

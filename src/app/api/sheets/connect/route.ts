@@ -43,6 +43,9 @@ try {
 |--------------------------------------------------------------------------
 */
 
+console.log("Origin:", req.headers.get("origin"));
+console.log("verifyOrigin:", verifyOrigin(req));
+
 if(!verifyOrigin(req)){
 
 return NextResponse.json(
@@ -264,6 +267,9 @@ user.id,
 | Ownership protection
 |--------------------------------------------------------------------------
 */
+
+console.log("Spreadsheet owner:", spreadsheet.ownerId);
+console.log("Current user:", user.id);
 
 
 if(

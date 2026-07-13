@@ -118,6 +118,13 @@ spreadsheet.id
 
 />
 
+<Link
+    href={`/compare/${spreadsheet.id}`}
+    className="border px-4 py-2 rounded ml-2"
+>
+    Compare Versions
+</Link>
+
 
 
       <div className="mt-10 space-y-6">
